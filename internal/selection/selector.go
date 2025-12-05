@@ -17,7 +17,8 @@ type SelectionContext struct {
 	History []AnswerRecord
 }
 
-//Rule based
+//RULE BASED SELECTION
+
 type RuleBased struct {
 	questionBank content.QuestionBank
 }
@@ -30,6 +31,8 @@ func (rb *RuleBased) SelectQuestion(ctx SelectionContext) (int, error) {
 
 	unanswered := filterUnanswered(allQuestions, ctx.Answered)
 	bestQuestion := findClosestDifficulty(unanswered, ctx.PL0)
+
+	return bestQuestion.ID, nil
 }
 
 func findClosestDifficulty(unanswered []content.Question, targetPL float64) content.Question {
@@ -63,6 +66,5 @@ func filterUnanswered(questions []content.Question, answeredIDs []int) []content
 			unanswered = append(unanswered, q)
 		}
 	}
-
 	return unanswered
 }
