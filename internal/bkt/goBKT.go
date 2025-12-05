@@ -48,7 +48,10 @@ func InitializeBKTModel(l0, t, s, g float64) *BKTModel {
 		G: g,
 		currentKnowledge: l0,
 	}
+}
 
+func (bkt *BKTModel) GetCurrentKnowledge() float64{
+	return bkt.currentKnowledge
 }
 
 func learnerAnswer(input string, answer string) bool{

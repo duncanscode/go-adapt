@@ -8,14 +8,15 @@ import (
 // This package selects the next question for the learner
 
 type Selector interface {
-	SelectQuestion(ctx SelectionContext) (int, error)
+	SelectQuestion(ctx SelectionContext) (*content.Question, error)
 }
 
 type SelectionContext struct {
 	PL0 float64
 	Answered []int
-	History []AnswerRecord
 }
+
+
 
 //RULE BASED SELECTION
 
@@ -29,19 +30,19 @@ func NewRuleBased(bank content.QuestionBank) *RuleBased {
     }
 }
 
-func (rb *RuleBased) SelectQuestion(ctx SelectionContext) (int, error) {
+func (rb *RuleBased) SelectQuestion(ctx SelectionContext) (*content.Question, error) {
 	allQuestions, err := rb.questionBank.GetAll()
 	if err != nil {
-    return 0, err
+    return nil, err
 	}
 
 	unanswered := filterUnanswered(allQuestions, ctx.Answered)
 	bestQuestion := findClosestDifficulty(unanswered, ctx.PL0)
 
-	return bestQuestion.ID, nil
+	return bestQuestion, nil
 }
 
-func findClosestDifficulty(unanswered []content.Question, targetPL float64) content.Question {
+func findClosestDifficulty(unanswered []content.Question, targetPL float64) *content.Question {
     // implementation
 	var closestQuestion = unanswered[0]
 	var minDiff = math.Abs(float64(closestQuestion.Metadata.Difficulty) - targetPL)
@@ -53,7 +54,7 @@ func findClosestDifficulty(unanswered []content.Question, targetPL float64) cont
 			closestQuestion = unanswered[i]
 		}
 	}
-	return closestQuestion
+	return &closestQuestion
 }
 
 // Private helper functions (lowercase)

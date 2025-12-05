@@ -42,14 +42,43 @@ type SessionManager struct{
 	selector selection.Selector
 	questionBank content.QuestionBank
 	answeredIDs []int
-	answerHistory []selection.AnswerRecord
+	// TODO: answerHistory []selection.AnswerRecord
 }
 
-func NewSessionManager(l0, t, s, g float64) *SessionManager{
+func NewSessionManager(questionBank content.QuestionBank, l0, t, s, g float64) *SessionManager{
 	return &SessionManager{
 		bktModel: bkt.InitializeBKTModel(l0,t,s,g),
-		questionBank: content.NewStaticBank()
-	)
+		questionBank: questionBank,
+		selector: selection.NewRuleBased(questionBank),
 	}
+}
 
+func (sm *SessionManager) GetNextQuestion() (*content.Question, error){
+	ctx := selection.SelectionContext{
+		PL0: sm.bktModel.GetCurrentKnowledge(),
+		Answered: sm.answeredIDs,
+	}
+	nextQuestion, err := sm.selector.SelectQuestion(ctx)
+	if err != nil {
+    return nil, err
+	}
+	return nextQuestion, nil
+}
+
+func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) float64{
+	if !correct {
+		sm.bktModel.UpdateCorrect()
+	} else {
+		sm.bktModel.UpdateIncorrect()
+	}
+	sm.answeredIDs = append(sm.answeredIDs, questionID)
+
+	//TODO add to answer history
+
+	return sm.bktModel.GetCurrentKnowledge()
+
+}
+
+func (sm *SessionManager) GetAnsweredCount(answeredIDs []int) int{
+	return len(answeredIDs)
 }
