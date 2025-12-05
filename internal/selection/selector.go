@@ -23,6 +23,12 @@ type RuleBased struct {
 	questionBank content.QuestionBank
 }
 
+func NewRuleBased(bank content.QuestionBank) *RuleBased {
+    return &RuleBased{
+        questionBank: bank,
+    }
+}
+
 func (rb *RuleBased) SelectQuestion(ctx SelectionContext) (int, error) {
 	allQuestions, err := rb.questionBank.GetAll()
 	if err != nil {

@@ -39,7 +39,7 @@ type BKTModel struct {
 	knowledgeHistory []float64
 }
 
-func initializeBKTModel(l0, t, s, g float64) *BKTModel {
+func InitializeBKTModel(l0, t, s, g float64) *BKTModel {
 
 	return &BKTModel{
 		L0: l0,
