@@ -42,7 +42,7 @@ type SessionManager struct{
 	selector selection.Selector
 	questionBank content.QuestionBank
 	answeredIDs []int
-	// TODO: answerHistory []selection.AnswerRecord
+	answerHistory []selection.AnswerRecord
 }
 
 func NewSessionManager(questionBank content.QuestionBank, l0, t, s, g float64) *SessionManager{
@@ -57,6 +57,7 @@ func (sm *SessionManager) GetNextQuestion() (*content.Question, error){
 	ctx := selection.SelectionContext{
 		PL0: sm.bktModel.GetCurrentKnowledge(),
 		Answered: sm.answeredIDs,
+		History: sm.answerHistory,
 	}
 	nextQuestion, err := sm.selector.SelectQuestion(ctx)
 	if err != nil {
@@ -74,6 +75,10 @@ func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) float64{
 	sm.answeredIDs = append(sm.answeredIDs, questionID)
 
 	//TODO add to answer history
+	sm.answerHistory = append(sm.answerHistory, selection.AnswerRecord{
+		QuestionID: questionID,
+		Correct: correct,
+	})
 
 	return sm.bktModel.GetCurrentKnowledge()
 

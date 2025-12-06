@@ -2,19 +2,25 @@ package llm
 
 // imported as anthropic
 import (
+	"context"
+	"encoding/json"
 	"go-adapt/internal/content"
 	"go-adapt/internal/selection"
+
+	"github.com/anthropics/anthropic-sdk-go" // imported as anthropic
+	"github.com/anthropics/anthropic-sdk-go/option"
 )
 
-
 type LLMClient struct {
-	apiKey string
+	*anthropic.Client
+	systemPrompt string
 }
 
 func newLLMClient(a string) *LLMClient {
-	return &LLMClient {
-		apiKey: a,
-	}
+	client := anthropic.NewClient(option.WithAPIKey(a))
+      return &LLMClient{
+          Client: &client,
+      }
 }
 
 /*   Methods (for now):
@@ -24,8 +30,26 @@ func newLLMClient(a string) *LLMClient {
       answeredHistory []AnswerRecord,
   ) (int, error) */
 
-  func (c *LLMClient) SelectNextQuestion(
-	questionBank []content.Question,
-	answerHistory []selection.AnswerRecord
+func (client *LLMClient) SelectNextQuestion(questionBank []content.Question, answeredHistory []selection.AnswerRecord){
+	prompt := toJSONString(questionBank)
+	history := toJSONString(answeredHistory)
+	message, err := client.Messages.New(context.TODO(), anthropic.MessageNewParams{
+		Model: anthropic.ModelClaudeHaiku4_5_20251001,
+		MaxTokens: 1024,
+		System: []anthropic.TextBlockParam{
+			{Text: "hey"},
+		},
+		Messages: questionBank,
+	})
+}
 
-  )
+func toJSONString(data any) (string, error) {
+	jsonBytes, err := json.MarshalIndent(
+		data, "", "  "
+	)
+	if err != nil {
+		return "", err
+	}
+	return string(jsonBytes), nil
+}
+
