@@ -11,9 +11,15 @@ type Selector interface {
 	SelectQuestion(ctx SelectionContext) (*content.Question, error)
 }
 
+type AnswerRecord struct {
+	QuestionID int
+	Correct bool
+}
+
 type SelectionContext struct {
 	PL0 float64
 	Answered []int
+	History  []AnswerRecord
 }
 
 

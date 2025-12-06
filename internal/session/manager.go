@@ -67,9 +67,9 @@ func (sm *SessionManager) GetNextQuestion() (*content.Question, error){
 
 func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) float64{
 	if !correct {
-		sm.bktModel.UpdateCorrect()
-	} else {
 		sm.bktModel.UpdateIncorrect()
+	} else {
+		sm.bktModel.UpdateCorrect()
 	}
 	sm.answeredIDs = append(sm.answeredIDs, questionID)
 

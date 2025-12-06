@@ -1,26 +1,3 @@
-/*
-internal/
-├── bkt/
-│   └── bkt.go
-├── content/
-│   ├── questions.go
-│   ├── static_bank.go
-│   └── generative_bank.go
-├── selection/
-│   ├── selector.go
-│   ├── rule_based.go
-│   ├── llm_based.go
-│   └── intelligent.go
-├── feedback/
-│   ├── feedback.go
-│   ├── rule_based.go
-│   └── llm_based.go
-├── handler/
-│   └── handler.go        // One file, mode-based routing
-└── llm/
-    └── client.go
-*/
-
 package bkt
 
 import (
@@ -54,15 +31,6 @@ func (bkt *BKTModel) GetCurrentKnowledge() float64{
 	return bkt.currentKnowledge
 }
 
-func learnerAnswer(input string, answer string) bool{
-	if input == answer{
-		println("Correct")
-		return true
-	} else{
-		println("Incorrect")
-		return false
-	}
-}
 
 func (bkt *BKTModel) UpdateIncorrect(){
 	//probability they knew it beforehand * probability of slip
