@@ -2,6 +2,7 @@ package selection
 
 import (
 	"go-adapt/internal/content"
+	"go-adapt/internal/llm"
 	"math"
 )
 
@@ -21,8 +22,6 @@ type SelectionContext struct {
 	Answered []int
 	History  []AnswerRecord
 }
-
-
 
 //RULE BASED SELECTION
 
@@ -63,6 +62,30 @@ func findClosestDifficulty(unanswered []content.Question, targetPL float64) *con
 	return &closestQuestion
 }
 
+// LLM based selector
+
+type LLMSelector struct{
+	questionBank content.QuestionBank
+	llmClient *llm.LLMClient
+}
+
+func NewLLMSelector(qb content.QuestionBank, client *llm.LLMClient) *LLMSelector{
+	return & LLMSelector{
+		questionBank: qb,
+		llmClient: client,
+	}
+}
+
+func (ls *LLMSelector) SelectQuestion(ctx SelectionContext) (*content.Question, error){
+	allQuestions, err := ls.questionBank.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	questionID, err := ls.llmClient.SelectNextQuestion(allQuestions, ctx.History)
+
+}
+
 // Private helper functions (lowercase)
 func filterUnanswered(questions []content.Question, answeredIDs []int) []content.Question {
 	var unanswered []content.Question
@@ -81,3 +104,4 @@ func filterUnanswered(questions []content.Question, answeredIDs []int) []content
 	}
 	return unanswered
 }
+

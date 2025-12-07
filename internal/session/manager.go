@@ -3,6 +3,7 @@ package session
 import (
 	"go-adapt/internal/bkt"
 	"go-adapt/internal/content"
+	"go-adapt/internal/llm"
 	"go-adapt/internal/selection"
 )
 
@@ -43,13 +44,22 @@ type SessionManager struct{
 	questionBank content.QuestionBank
 	answeredIDs []int
 	answerHistory []selection.AnswerRecord
+	mode string
 }
 
-func NewSessionManager(questionBank content.QuestionBank, l0, t, s, g float64) *SessionManager{
+func NewSessionManager(questionBank content.QuestionBank, mode string, llmClient *llm.LLMClient, l0, t, s, g float64) *SessionManager{
+	var selector selection.Selector
+	if mode == "llm" {
+		selector = selection.NewLLMBased(questionBank, llmClient)
+	} else {
+		selector = selection.NewRuleBased(questionBank)
+	}
+
 	return &SessionManager{
 		bktModel: bkt.InitializeBKTModel(l0,t,s,g),
 		questionBank: questionBank,
-		selector: selection.NewRuleBased(questionBank),
+		selector: selector,
+		mode: mode,
 	}
 }
 
