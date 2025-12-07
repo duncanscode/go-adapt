@@ -1,9 +1,5 @@
 package bkt
 
-import (
-	"fmt"
-)
-
 
 type BKTModel struct {
 	L0 float64
@@ -44,7 +40,6 @@ func (bkt *BKTModel) UpdateIncorrect(){
 	bkt.currentKnowledge = actual + ((1-bkt.G)*(bkt.T))
 	bkt.knowledgeHistory = append(bkt.knowledgeHistory, bkt.currentKnowledge)
 	bkt.answerHistory = append(bkt.answerHistory, false)
-	fmt.Printf("Incorrect, knowledge set to = %.2f\n", bkt.currentKnowledge)
 }
 
 func (bkt *BKTModel) UpdateCorrect(){
@@ -59,6 +54,5 @@ func (bkt *BKTModel) UpdateCorrect(){
 	bkt.currentKnowledge = actual + ((1-actual)*(bkt.T))
 	bkt.knowledgeHistory = append(bkt.knowledgeHistory, bkt.currentKnowledge)
 	bkt.answerHistory = append(bkt.answerHistory, true)
-	fmt.Printf("Correct, knowledge set to = %.2f\n", bkt.currentKnowledge)
 
 }

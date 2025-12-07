@@ -13,12 +13,11 @@
       "Bash(git log:*)",
       "Bash(git diff:*)",
       "WebFetch",
-      "WebSearch"
+      "WebSearch",
+      "Write",
+      "Edit"
     ],
     "deny": [
-      "Write",
-      "Edit",
-      "MultiEdit",
       "Bash(rm:*)",
       "Bash(mv:*)",
       "Bash(cp:*)",

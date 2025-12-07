@@ -2,6 +2,7 @@ package content
 
 type QuestionBank interface {
 	GetAll()([]Question, error)
+	GetQuestionByID(id int)(*Question, error)
 }
 
 type Question struct{
@@ -9,6 +10,7 @@ type Question struct{
 	Text string
 	Answer string
 	Metadata QuestionMetadata
+	Options []string
 }
 
 type QuestionMetadata struct {
@@ -16,3 +18,7 @@ type QuestionMetadata struct {
 	Tags []string
 }
 
+type AnswerRecord struct {
+	QuestionID int
+	Correct bool
+}

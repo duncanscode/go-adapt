@@ -1,0 +1,387 @@
+/* Custom overrides for magick.css */
+
+body {
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
+.main-layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+.container {
+  flex: 1;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.screen {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subtitle {
+  opacity: 0.7;
+  margin-bottom: 2rem;
+}
+
+.mode-selector {
+  margin-bottom: 2rem;
+}
+
+.mode-selector label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.mode-selector select {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.3rem;
+}
+
+.btn {
+  width: 100%;
+  padding: 0.875rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.info {
+  margin-top: 2rem;
+  padding: 1.25rem;
+}
+
+.info p {
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+
+.info p:last-child {
+  margin-bottom: 0;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-3, #e5e7eb);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent, #6366f1);
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  opacity: 0.7;
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Knowledge display */
+.knowledge-display {
+  padding: 0.75rem 1.25rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  background: var(--bg-2, #f3f4f6);
+}
+
+.knowledge-display span {
+  font-size: 1.2em;
+}
+
+/* LLM Feedback speech bubble */
+.llm-feedback {
+  margin-bottom: 1.5rem;
+}
+
+.speech-bubble {
+  position: relative;
+  background: var(--bg-2, #f3f4f6);
+  border: 2px solid var(--fg-4, #d1d5db);
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.speech-bubble::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--fg-4, #d1d5db);
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 22px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--bg-2, #f3f4f6);
+}
+
+.speech-bubble p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Question options */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.option-btn {
+  padding: 1rem;
+  border: 2px solid var(--fg-4, #d1d5db);
+  border-radius: 4px;
+  background: var(--bg-1, #ffffff);
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: var(--accent, #6366f1);
+  transform: translateX(4px);
+}
+
+.option-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  text-decoration: none;
+}
+
+.option-btn.correct-answer {
+  border-color: #10b981;
+  background: #d1fae5;
+}
+
+.option-btn.incorrect-answer {
+  border-color: #ef4444;
+  background: #fee2e2;
+}
+
+/* Feedback */
+.feedback {
+  padding: 1.25rem;
+  border-radius: 4px;
+  margin-bottom: 1.25rem;
+}
+
+.feedback .correct {
+  color: #10b981;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.feedback .incorrect {
+  color: #ef4444;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+#correct-answer {
+  margin-top: 0.625rem;
+}
+
+/* Completion stats */
+.completion-stats {
+  padding: 1.875rem;
+  border-radius: 4px;
+  margin: 1.875rem 0;
+  background: var(--bg-2, #f3f4f6);
+}
+
+.stat {
+  font-size: 1.1em;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.stat:last-child {
+  margin-bottom: 0;
+}
+
+.stat strong {
+  color: var(--accent, #6366f1);
+}
+
+/* Loading overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--fg-4, #d1d5db);
+  border-top-color: var(--accent, #6366f1);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: var(--fg-1, #1f2937);
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+/* Reasoning Sidebar */
+.reasoning-sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 350px;
+  height: 100vh;
+  background: var(--bg-1, #ffffff);
+  border-left: 2px solid var(--fg-4, #d1d5db);
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+  z-index: 100;
+}
+
+.reasoning-sidebar.collapsed {
+  transform: translateX(100%);
+}
+
+.sidebar-header {
+  position: sticky;
+  top: 0;
+  background: var(--bg-2, #f3f4f6);
+  padding: 1.25rem;
+  border-bottom: 2px solid var(--fg-4, #d1d5db);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.toggle-btn {
+  background: none;
+  border: 2px solid var(--fg-4, #d1d5db);
+  border-radius: 4px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.toggle-btn:hover {
+  background: var(--bg-3, #e5e7eb);
+}
+
+.sidebar-content {
+  padding: 1.25rem;
+  line-height: 1.6;
+}
+
+#reasoning-text {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+@media (max-width: 1100px) {
+  .reasoning-sidebar {
+    width: 300px;
+  }
+}
+
+@media (max-width: 900px) {
+  .reasoning-sidebar {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  h2 {
+    font-size: 1.1em;
+  }
+
+  .reasoning-sidebar {
+    width: 100%;
+  }
+}

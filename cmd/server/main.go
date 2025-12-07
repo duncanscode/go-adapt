@@ -3,64 +3,49 @@ package main
 import (
 	"fmt"
 	"go-adapt/internal/content"
-	"go-adapt/internal/session"
+	"go-adapt/internal/handler"
+	"go-adapt/internal/llm"
+	"log"
+	"os"
+
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
-/*
-cmd/server/main.go
-
-  Purpose: Simple CLI loop to test the adaptive learning system
-
-  Flow:
-  1. Create SessionManager with initial BKT parameters (0.01, 0.1, 0.05, 0.33)
-  2. Print welcome message
-  3. Loop:
-    - Get next question from manager
-    - Display question text
-    - Get user input (their answer)
-    - Compare to correct answer (case-insensitive)
-    - Submit answer result to manager
-    - Display if correct/incorrect and current knowledge level
-    - Continue until all questions answered or user quits
-  4. Print final stats (total answered, final knowledge)
-
-  User Input Handling:
-  - Accept typed answers
-  - Optional: allow "quit" to exit early
-  - Trim whitespace, case-insensitive comparison
-*/
-
 func main() {
+	// Load .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found - using system environment variables")
+	}
+
+	// Setup
+	apiKey := os.Getenv("ANTHROPIC_API_KEY")
+
 	bank := content.NewStaticBank()
-	manager := session.NewSessionManager(bank, 0.01, 0.1, 0.05, 0.33)
-	var input string
-	fmt.Println("Welcome to the adaptive learning test tool.")
-
-	for{
-		question, err := manager.GetNextQuestion()
-		if err != nil {
-    		break
-		}
-		fmt.Println(question.Text)
-		fmt.Scanln(&input)
-		result := learnerAnswer(input, question.Answer)
-		manager.SubmitAnswer(question.ID, result)
-
-
-
-		fmt.Printf("Your answer was %s. The correct answer was %s. You were %t \n",input, question.Answer, result )
-
-
+	llmClient := llm.NewLLMClient(apiKey)
+	if apiKey != "" {
+		llmClient = llm.NewLLMClient(apiKey)
+		fmt.Println("LLM client initialized (LLM mode available)")
+	} else {
+		fmt.Println("ANTHROPIC_API_KEY not set - LLM mode disabled")
 	}
 
-}
+	h := handler.NewHandler(bank, llmClient)
 
-func learnerAnswer(input string, answer string) bool{
-	if input == answer{
-		println("Correct")
-		return true
-	} else{
-		println("Incorrect")
-		return false
-	}
+	// Define routes
+	r := gin.Default()
+
+	// API routes
+	r.POST("/session/start", h.StartSession)
+	r.GET("/session/question", h.GetNextQuestion)
+	r.POST("/session/answer", h.SubmitAnswer)
+
+	// Serve static frontend files (must come after API routes)
+	r.Static("/static", "./frontend")
+	r.StaticFile("/", "./frontend/index.html")
+
+	// Start server (this blocks forever, handling requests)
+	fmt.Println("server starting on http://localhost:8080")
+	r.Run(":1234")
 }

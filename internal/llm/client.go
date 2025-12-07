@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"go-adapt/internal/content"
-	"go-adapt/internal/selection"
 	"regexp"
 	"strconv"
 
@@ -19,7 +18,7 @@ type LLMClient struct {
 	systemPrompt string
 }
 
-func newLLMClient(a string) *LLMClient {
+func NewLLMClient(a string) *LLMClient {
 	client := anthropic.NewClient(option.WithAPIKey(a))
       return &LLMClient{
           Client: &client,
@@ -34,7 +33,13 @@ func newLLMClient(a string) *LLMClient {
       answeredHistory []AnswerRecord,
   ) (int, error) */
 
-func (client *LLMClient) SelectNextQuestion(questionBank []content.Question, answeredHistory []selection.AnswerRecord) (int, error){
+type LLMResponse struct {
+	QuestionID         int
+	Feedback           string
+	SelectionReasoning string
+}
+
+func (client *LLMClient) SelectNextQuestion(questionBank []content.Question, answeredHistory []content.AnswerRecord) (*LLMResponse, error){
 	questions, _ := toJSONString(questionBank)
 	history, _ := toJSONString(answeredHistory)
 
@@ -53,7 +58,7 @@ func (client *LLMClient) SelectNextQuestion(questionBank []content.Question, ans
 
 	message, err := client.Messages.New(context.TODO(), anthropic.MessageNewParams{
 		Model: anthropic.ModelClaudeHaiku4_5_20251001,
-		MaxTokens: 1024,
+		MaxTokens: 4096,
 		System: []anthropic.TextBlockParam{
 			{Text: client.systemPrompt},
 		},
@@ -62,19 +67,26 @@ func (client *LLMClient) SelectNextQuestion(questionBank []content.Question, ans
 		},
 	})
 	if err != nil {
-		panic(err.Error())
+		return nil, fmt.Errorf("failed to call LLM API: %w", err)
 	}
 	fmt.Printf("%+v\n", message.Content)
 
-	//extract ID
+	//extract ID and feedback
 	responseText := message.Content[0].Text
 
 	questionID, err := parseQuestionID(responseText)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 
-	return questionID, nil
+	feedback := parseFeedback(responseText)
+	reasoning := parseSelectionReasoning(responseText)
+
+	return &LLMResponse{
+		QuestionID:         questionID,
+		Feedback:           feedback,
+		SelectionReasoning: reasoning,
+	}, nil
 }
 
 func parseQuestionID(response string) (int,error){
@@ -84,6 +96,24 @@ func parseQuestionID(response string) (int,error){
 		return 0, fmt.Errorf("could not find question ID in response")
 	}
 	return strconv.Atoi(matches[1])
+}
+
+func parseFeedback(response string) string {
+	re := regexp.MustCompile(`(?s)<feedback>\s*(.*?)\s*</feedback>`)
+	matches := re.FindStringSubmatch(response)
+	if len(matches) < 2 {
+		return "" // No feedback found, return empty string
+	}
+	return matches[1]
+}
+
+func parseSelectionReasoning(response string) string {
+	re := regexp.MustCompile(`(?s)<selection_reasoning>\s*(.*?)\s*</selection_reasoning>`)
+	matches := re.FindStringSubmatch(response)
+	if len(matches) < 2 {
+		return "" // No reasoning found, return empty string
+	}
+	return matches[1]
 }
 
 func toJSONString(data any) (string, error) {

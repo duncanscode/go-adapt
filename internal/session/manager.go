@@ -43,14 +43,19 @@ type SessionManager struct{
 	selector selection.Selector
 	questionBank content.QuestionBank
 	answeredIDs []int
-	answerHistory []selection.AnswerRecord
+	answerHistory []content.AnswerRecord
 	mode string
+}
+
+type QuestionResult struct {
+	Question *content.Question
+	Feedback string
 }
 
 func NewSessionManager(questionBank content.QuestionBank, mode string, llmClient *llm.LLMClient, l0, t, s, g float64) *SessionManager{
 	var selector selection.Selector
 	if mode == "llm" {
-		selector = selection.NewLLMBased(questionBank, llmClient)
+		selector = selection.NewLLMSelector(questionBank, llmClient)
 	} else {
 		selector = selection.NewRuleBased(questionBank)
 	}
@@ -63,37 +68,82 @@ func NewSessionManager(questionBank content.QuestionBank, mode string, llmClient
 	}
 }
 
-func (sm *SessionManager) GetNextQuestion() (*content.Question, error){
+func (sm *SessionManager) GetNextQuestion() (*QuestionResult, error){
 	ctx := selection.SelectionContext{
 		PL0: sm.bktModel.GetCurrentKnowledge(),
 		Answered: sm.answeredIDs,
 		History: sm.answerHistory,
 	}
-	nextQuestion, err := sm.selector.SelectQuestion(ctx)
+	result, err := sm.selector.SelectQuestion(ctx)
 	if err != nil {
-    return nil, err
+		return nil, err
 	}
-	return nextQuestion, nil
+	return &QuestionResult{
+		Question: result.Question,
+		Feedback: result.Feedback,
+	}, nil
 }
 
-func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) float64{
-	if !correct {
-		sm.bktModel.UpdateIncorrect()
-	} else {
-		sm.bktModel.UpdateCorrect()
-	}
-	sm.answeredIDs = append(sm.answeredIDs, questionID)
+type SubmitAnswerResult struct {
+	CurrentKnowledge float64
+	Feedback         string
+}
 
-	//TODO add to answer history
-	sm.answerHistory = append(sm.answerHistory, selection.AnswerRecord{
+func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) *SubmitAnswerResult {
+	if sm.mode == "bkt" {
+		if !correct {
+			sm.bktModel.UpdateIncorrect()
+		} else {
+			sm.bktModel.UpdateCorrect()
+		}
+	}
+
+	sm.answeredIDs = append(sm.answeredIDs, questionID)
+	sm.answerHistory = append(sm.answerHistory, content.AnswerRecord{
 		QuestionID: questionID,
-		Correct: correct,
+		Correct:    correct,
 	})
 
-	return sm.bktModel.GetCurrentKnowledge()
+	// Prepare next question (LLM analyzes performance here)
+	ctx := selection.SelectionContext{
+		PL0:      sm.bktModel.GetCurrentKnowledge(),
+		Answered: sm.answeredIDs,
+		History:  sm.answerHistory,
+	}
 
+	feedback := ""
+	// Only get feedback from PrepareNextQuestion if in LLM mode
+	if sm.mode == "llm" {
+		sm.selector.PrepareNextQuestion(ctx)
+		// Peek at cached result to get feedback without consuming it
+		if llmSelector, ok := sm.selector.(*selection.LLMSelector); ok {
+			if llmSelector.GetCachedResult() != nil {
+				feedback = llmSelector.GetCachedResult().Feedback
+			}
+		}
+	} else {
+		sm.selector.PrepareNextQuestion(ctx)
+	}
+
+	knowledge := 0.0
+	if sm.mode == "bkt" {
+		knowledge = sm.bktModel.GetCurrentKnowledge()
+	}
+
+	return &SubmitAnswerResult{
+		CurrentKnowledge: knowledge,
+		Feedback:         feedback,
+	}
 }
 
-func (sm *SessionManager) GetAnsweredCount(answeredIDs []int) int{
-	return len(answeredIDs)
+func (sm *SessionManager) GetAnsweredCount() int{
+	return len(sm.answeredIDs)
+}
+
+func (sm *SessionManager) GetAnsweredIDs() []int{
+	return sm.answeredIDs
+}
+
+func (sm *SessionManager) GetCurrentKnowledge() float64{
+	return sm.bktModel.GetCurrentKnowledge()
 }

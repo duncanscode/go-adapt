@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Learning - Medical Terminology</title>
+    <link rel="stylesheet" href="https://unpkg.com/normalize.css">
+    <link rel="stylesheet" href="https://unpkg.com/magick.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="main-layout">
+        <div class="container">
+            <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <h1>Medical Terminology Quiz</h1>
+            <p class="subtitle">Adaptive learning powered by BKT or LLM</p>
+
+            <div class="mode-selector">
+                <label for="mode">Select Mode:</label>
+                <select id="mode">
+                    <option value="bkt">BKT Mode (Rule-based)</option>
+                    <option value="llm">LLM Mode (AI-powered)</option>
+                </select>
+            </div>
+
+            <button id="start-btn" class="btn btn-primary">Start Quiz</button>
+
+            <div class="info">
+                <p><strong>BKT Mode:</strong> Uses Bayesian Knowledge Tracing to adapt difficulty based on your performance.</p>
+                <p><strong>LLM Mode:</strong> Uses Claude AI to intelligently select questions based on your learning patterns.</p>
+            </div>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="question-screen" class="screen" style="display: none;">
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <p class="progress-text">Question <span id="question-num">1</span> of 10</p>
+
+            <div id="knowledge-display" class="knowledge-display">
+                Knowledge Level: <span id="knowledge-value">0%</span>
+            </div>
+
+            <div id="llm-feedback" class="llm-feedback" style="display: none;">
+                <div class="speech-bubble">
+                    <p id="llm-feedback-text"></p>
+                </div>
+            </div>
+
+            <h2 id="question-text"></h2>
+
+            <div id="options" class="options"></div>
+
+            <div id="feedback" class="feedback" style="display: none;">
+                <p id="feedback-text"></p>
+                <p id="correct-answer"></p>
+            </div>
+
+            <button id="next-btn" class="btn btn-primary" style="display: none;">Next Question</button>
+        </div>
+
+        <!-- Completion Screen -->
+        <div id="completion-screen" class="screen" style="display: none;">
+            <h1>Quiz Complete!</h1>
+            <div class="completion-stats">
+                <p class="stat">Questions Answered: <strong>10</strong></p>
+                <p class="stat">Correct Answers: <strong id="correct-count">0</strong></p>
+                <p class="stat">Accuracy: <strong id="accuracy">0%</strong></p>
+                <p class="stat" id="final-knowledge-stat">Final Knowledge Level: <strong id="final-knowledge">0%</strong></p>
+            </div>
+            <button id="restart-btn" class="btn btn-primary">Start New Quiz</button>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="loading-overlay" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Analyzing your performance...</p>
+        </div>
+    </div>
+
+    <!-- Sidebar for LLM Reasoning -->
+    <aside id="reasoning-sidebar" class="reasoning-sidebar" style="display: none;">
+        <div class="sidebar-header">
+            <h3>Selection Reasoning</h3>
+            <button id="toggle-sidebar" class="toggle-btn">−</button>
+        </div>
+        <div id="sidebar-content" class="sidebar-content">
+            <p id="reasoning-text">LLM reasoning will appear here...</p>
+        </div>
+    </aside>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
