@@ -33,10 +33,19 @@ func NewLLMClient(a string) *LLMClient {
       answeredHistory []AnswerRecord,
   ) (int, error) */
 
+type UserModel struct {
+	KnowledgeLevel      float64
+	Confidence          float64
+	LearningRate        float64
+	PatternConsistency  float64
+	DifficultyTolerance float64
+}
+
 type LLMResponse struct {
 	QuestionID         int
 	Feedback           string
 	SelectionReasoning string
+	UserModel          *UserModel
 }
 
 func (client *LLMClient) SelectNextQuestion(questionBank []content.Question, answeredHistory []content.AnswerRecord) (*LLMResponse, error){
@@ -81,11 +90,13 @@ func (client *LLMClient) SelectNextQuestion(questionBank []content.Question, ans
 
 	feedback := parseFeedback(responseText)
 	reasoning := parseSelectionReasoning(responseText)
+	userModel := parseUserModel(responseText)
 
 	return &LLMResponse{
 		QuestionID:         questionID,
 		Feedback:           feedback,
 		SelectionReasoning: reasoning,
+		UserModel:          userModel,
 	}, nil
 }
 
@@ -114,6 +125,35 @@ func parseSelectionReasoning(response string) string {
 		return "" // No reasoning found, return empty string
 	}
 	return matches[1]
+}
+
+func parseUserModel(response string) *UserModel {
+	// Helper to extract float from XML tag
+	extractFloat := func(tagName string) float64 {
+		re := regexp.MustCompile(fmt.Sprintf(`<%s>\s*([0-9.]+)\s*</%s>`, tagName, tagName))
+		matches := re.FindStringSubmatch(response)
+		if len(matches) < 2 {
+			return 0.0
+		}
+		val, err := strconv.ParseFloat(matches[1], 64)
+		if err != nil {
+			return 0.0
+		}
+		return val
+	}
+
+	// Check if user_model exists in response
+	if !regexp.MustCompile(`<user_model>`).MatchString(response) {
+		return nil
+	}
+
+	return &UserModel{
+		KnowledgeLevel:      extractFloat("knowledge_level"),
+		Confidence:          extractFloat("confidence"),
+		LearningRate:        extractFloat("learning_rate"),
+		PatternConsistency:  extractFloat("pattern_consistency"),
+		DifficultyTolerance: extractFloat("difficulty_tolerance"),
+	}
 }
 
 func toJSONString(data any) (string, error) {

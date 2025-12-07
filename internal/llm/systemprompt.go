@@ -147,6 +147,25 @@ Provide your response in the following format:
 Provide a brief summary of the student's current mastery level, key strengths, and areas for improvement. Include specific statistics and patterns you've identified.
 </analysis>
 
+<user_model>
+After analyzing the user's performance, output these quantitative metrics (all values between 0 and 1, except difficulty_tolerance which is 1-9):
+
+<knowledge_level>0.72</knowledge_level>
+<!-- Probability the user truly understands the material (0-1). Your equivalent to BKT's P(L). -->
+
+<confidence>0.85</confidence>
+<!-- How certain you are in your knowledge estimate (0-1). More data points = higher confidence. -->
+
+<learning_rate>0.45</learning_rate>
+<!-- Rate of improvement from first to latest answers (0-1). 0.5 = steady, >0.5 = accelerating, <0.5 = slowing. -->
+
+<pattern_consistency>0.91</pattern_consistency>
+<!-- How predictable/stable the answer pattern is (0-1). Low = possible guessing, high = stable understanding. -->
+
+<difficulty_tolerance>6.2</difficulty_tolerance>
+<!-- Maximum difficulty level (1-9) appropriate for the user right now. Maps to zone of proximal development. -->
+</user_model>
+
 <feedback>
 Provide personalized feedback on the student's most recent answer. Explain why it was correct or incorrect, address any misconceptions, and offer encouragement tailored to their performance level. Keep length concise.
 </feedback>

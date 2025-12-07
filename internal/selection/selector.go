@@ -10,8 +10,9 @@ import (
 
 type SelectionResult struct {
 	Question           *content.Question
-	Feedback           string // LLM feedback, empty for rule-based
-	SelectionReasoning string // LLM reasoning for selection, empty for rule-based
+	Feedback           string          // LLM feedback, empty for rule-based
+	SelectionReasoning string          // LLM reasoning for selection, empty for rule-based
+	UserModel          *llm.UserModel  // LLM user model metrics, nil for rule-based
 }
 
 type Selector interface {
@@ -107,8 +108,9 @@ func (ls *LLMSelector) SelectQuestion(ctx SelectionContext) (*SelectionResult, e
 		firstQuestion := findClosestDifficulty(unanswered, 0.1)
 
 		return &SelectionResult{
-			Question: firstQuestion,
-			Feedback: "", // No feedback for first question
+			Question:           firstQuestion,
+			Feedback:           "", // No feedback for first question
+			SelectionReasoning: "Building your initial learner model. This first question helps establish a baseline for your current knowledge level.",
 		}, nil
 	}
 
@@ -157,6 +159,7 @@ func (ls *LLMSelector) PrepareNextQuestion(ctx SelectionContext) error {
 		Question:           question,
 		Feedback:           llmResponse.Feedback,
 		SelectionReasoning: llmResponse.SelectionReasoning,
+		UserModel:          llmResponse.UserModel,
 	}
 
 	return nil

@@ -40,6 +40,7 @@ func main() {
 	r.POST("/session/start", h.StartSession)
 	r.GET("/session/question", h.GetNextQuestion)
 	r.POST("/session/answer", h.SubmitAnswer)
+	r.GET("/session/metrics", h.GetMetrics)
 
 	// Serve static frontend files (must come after API routes)
 	r.Static("/static", "./frontend")

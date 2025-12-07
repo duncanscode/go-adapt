@@ -180,6 +180,23 @@ func (h *Handler) SubmitAnswer(c *gin.Context) {
 	c.JSON(200, response)
 }
 
+func (h *Handler) GetMetrics(c *gin.Context) {
+	sessionID := c.Query("session_id")
+	if sessionID == "" {
+		c.JSON(400, gin.H{"error": "session_id required"})
+		return
+	}
+
+	manager, exists := h.GetSession(sessionID)
+	if !exists {
+		c.JSON(404, gin.H{"error": "Session not found"})
+		return
+	}
+
+	metrics := manager.GetMetrics()
+	c.JSON(200, metrics)
+}
+
 func generateSessionID() string {
 	return fmt.Sprintf("%d-%d", time.Now().Unix(), rand.Intn(10000))
 }

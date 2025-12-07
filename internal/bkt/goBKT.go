@@ -27,6 +27,18 @@ func (bkt *BKTModel) GetCurrentKnowledge() float64{
 	return bkt.currentKnowledge
 }
 
+func (bkt *BKTModel) GetKnowledgeHistory() []float64 {
+	return bkt.knowledgeHistory
+}
+
+func (bkt *BKTModel) GetAnswerHistory() []bool {
+	return bkt.answerHistory
+}
+
+func (bkt *BKTModel) GetParameters() (l0, t, s, g float64) {
+	return bkt.L0, bkt.T, bkt.S, bkt.G
+}
+
 
 func (bkt *BKTModel) UpdateIncorrect(){
 	//probability they knew it beforehand * probability of slip

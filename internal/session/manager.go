@@ -45,11 +45,13 @@ type SessionManager struct{
 	answeredIDs []int
 	answerHistory []content.AnswerRecord
 	mode string
+	lastUserModel *llm.UserModel // Latest LLM user model (nil for BKT mode)
 }
 
 type QuestionResult struct {
-	Question *content.Question
-	Feedback string
+	Question           *content.Question
+	Feedback           string
+	SelectionReasoning string
 }
 
 func NewSessionManager(questionBank content.QuestionBank, mode string, llmClient *llm.LLMClient, l0, t, s, g float64) *SessionManager{
@@ -79,8 +81,9 @@ func (sm *SessionManager) GetNextQuestion() (*QuestionResult, error){
 		return nil, err
 	}
 	return &QuestionResult{
-		Question: result.Question,
-		Feedback: result.Feedback,
+		Question:           result.Question,
+		Feedback:           result.Feedback,
+		SelectionReasoning: result.SelectionReasoning,
 	}, nil
 }
 
@@ -115,10 +118,12 @@ func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) *SubmitAnsw
 	// Only get feedback from PrepareNextQuestion if in LLM mode
 	if sm.mode == "llm" {
 		sm.selector.PrepareNextQuestion(ctx)
-		// Peek at cached result to get feedback without consuming it
+		// Peek at cached result to get feedback and user model without consuming it
 		if llmSelector, ok := sm.selector.(*selection.LLMSelector); ok {
 			if llmSelector.GetCachedResult() != nil {
-				feedback = llmSelector.GetCachedResult().Feedback
+				cached := llmSelector.GetCachedResult()
+				feedback = cached.Feedback
+				sm.lastUserModel = cached.UserModel // Store latest user model
 			}
 		}
 	} else {
@@ -146,4 +151,55 @@ func (sm *SessionManager) GetAnsweredIDs() []int{
 
 func (sm *SessionManager) GetCurrentKnowledge() float64{
 	return sm.bktModel.GetCurrentKnowledge()
+}
+
+func (sm *SessionManager) GetMetrics() map[string]interface{} {
+	metrics := make(map[string]interface{})
+
+	// Get difficulty history from answered questions
+	difficultyHistory := make([]float64, 0, len(sm.answeredIDs))
+	for _, qid := range sm.answeredIDs {
+		question, err := sm.questionBank.GetQuestionByID(qid)
+		if err == nil {
+			difficultyHistory = append(difficultyHistory, question.Metadata.Difficulty)
+		}
+	}
+
+	metrics["difficulty_history"] = difficultyHistory
+	metrics["mode"] = sm.mode
+
+	if sm.mode == "bkt" {
+		// BKT-specific metrics
+		l0, t, s, g := sm.bktModel.GetParameters()
+
+		metrics["knowledge_history"] = sm.bktModel.GetKnowledgeHistory()
+		metrics["answer_history"] = sm.bktModel.GetAnswerHistory()
+		metrics["current_knowledge"] = sm.bktModel.GetCurrentKnowledge()
+		metrics["parameters"] = map[string]float64{
+			"l0": l0,
+			"t":  t,
+			"s":  s,
+			"g":  g,
+		}
+	} else if sm.mode == "llm" {
+		// LLM-specific metrics
+		if sm.lastUserModel != nil {
+			metrics["user_model"] = map[string]float64{
+				"knowledge_level":      sm.lastUserModel.KnowledgeLevel,
+				"confidence":           sm.lastUserModel.Confidence,
+				"learning_rate":        sm.lastUserModel.LearningRate,
+				"pattern_consistency":  sm.lastUserModel.PatternConsistency,
+				"difficulty_tolerance": sm.lastUserModel.DifficultyTolerance,
+			}
+		}
+
+		// Also include answer history for LLM mode
+		answerHistory := make([]bool, len(sm.answerHistory))
+		for i, record := range sm.answerHistory {
+			answerHistory[i] = record.Correct
+		}
+		metrics["answer_history"] = answerHistory
+	}
+
+	return metrics
 }
