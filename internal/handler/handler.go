@@ -88,7 +88,7 @@ func (h *Handler) StartSession(c *gin.Context) {
 	// Use defaults if not provided
 	l0 := req.L0
 	if l0 == 0 {
-		l0 = 0.01
+		l0 = 0.02
 	}
 	t := req.T
 	if t == 0 {
@@ -100,7 +100,7 @@ func (h *Handler) StartSession(c *gin.Context) {
 	}
 	g := req.G
 	if g == 0 {
-		g = 0.33
+		g = 0.2
 	}
 
 	sessionID := generateSessionID()

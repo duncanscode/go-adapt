@@ -11,244 +11,247 @@
 </head>
 
 <body>
-    <div class="three-column-layout">
-        <!-- Left Column (BKT Metrics) -->
-        <div class="left-column">
-            <div id="bkt-metrics-left" style="display: none;">
+    <main class="container-fluid">
+        <div class="three-column-layout">
+            <!-- Left Column (BKT Metrics) -->
+            <div class="left-column">
+                <div id="bkt-metrics-left" style="display: none;">
 
 
-                <!-- Knowledge Level Graph -->
-                <article class="metrics-card">
-                    <h4>Knowledge Trajectory</h4>
-                    <canvas id="knowledge-chart"></canvas>
-                </article>
+                    <!-- Knowledge Level Graph -->
+                    <article>
+                        <h4>Knowledge Trajectory</h4>
+                        <canvas id="knowledge-chart"></canvas>
+                    </article>
 
-                <!-- Answer Pattern Indicators -->
-                <article class="metrics-card">
-                    <h4>Progress</h4>
-                    <div class="metrics-row">
-                        <div class="metrics-label">Accuracy:</div>
-                        <div class="metrics-value" id="accuracy-display">0/0 (0%)</div>
-                    </div>
-                    <div class="metrics-row">
-                        <div class="metrics-label">Streak:</div>
-                        <div class="metrics-value" id="streak-display">-</div>
-                    </div>
-                    <div class="answer-history" id="answer-history">
-                        <!-- Icons will be added dynamically -->
-                    </div>
-                </article>
+                    <!-- Answer Pattern Indicators -->
+                    <article>
+                        <h4>Progress</h4>
+                        <div class="metrics-row">
+                            <div class="metrics-label">Accuracy:</div>
+                            <div class="metrics-value" id="accuracy-display">0/0 (0%)</div>
+                        </div>
+                        <div class="metrics-row">
+                            <div class="metrics-label">Streak:</div>
+                            <div class="metrics-value" id="streak-display">-</div>
+                        </div>
+                        <div class="answer-history" id="answer-history">
+                            <!-- Icons will be added dynamically -->
+                        </div>
+                    </article>
 
-                <!-- Difficulty Progression -->
-                <article class="metrics-card">
-                    <h4>Difficulty Progression</h4>
-                    <div id="difficulty-track" class="difficulty-bars">
-                        <!-- Bars will be added dynamically -->
-                    </div>
-                </article>
+                    <!-- Difficulty Progression -->
+                    <article>
+                        <h4>Difficulty Progression</h4>
+                        <div id="difficulty-track" class="difficulty-bars">
+                            <!-- Bars will be added dynamically -->
+                        </div>
+                    </article>
+                </div>
+
+                <!-- LLM Comparative Metrics (shown in LLM mode) -->
+                <div id="llm-metrics-left" style="display: none;">
+                    <article class="comparative-header">
+                        <h3>Model Comparison</h3>
+                        <p class="comparison-subtitle">LLM vs BKT Analysis</p>
+                    </article>
+
+                    <!-- Knowledge Level Comparison -->
+                    <article class="comparative-metrics">
+                        <div class="grid">
+                            <div class="metric-half">
+                                <h5>BKT Model</h5>
+                                <div class="metric-value-lg" id="bkt-knowledge-compare">-</div>
+                                <div class="metric-label">Knowledge</div>
+                            </div>
+                            <div class="metric-half">
+                                <h5>LLM Model</h5>
+                                <div class="metric-value-lg" id="llm-knowledge-compare">-</div>
+                                <div class="metric-label">Knowledge</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- LLM-Specific Metrics -->
+                    <article>
+                        <h4>LLM User Model</h4>
+                        <div class="llm-metric">
+                            <div class="llm-metric-header">
+                                <span>Confidence</span>
+                                <span id="llm-confidence-val">-</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="llm-confidence-bar"></div>
+                            </div>
+                        </div>
+                        <div class="llm-metric">
+                            <div class="llm-metric-header">
+                                <span>Learning Rate</span>
+                                <span id="llm-learning-rate-val">-</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="llm-learning-rate-bar"></div>
+                            </div>
+                        </div>
+                        <div class="llm-metric">
+                            <div class="llm-metric-header">
+                                <span>Consistency</span>
+                                <span id="llm-consistency-val">-</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="llm-consistency-bar"></div>
+                            </div>
+                        </div>
+                        <div class="llm-metric">
+                            <div class="llm-metric-header">
+                                <span>Difficulty Tolerance</span>
+                                <span id="llm-difficulty-tol-val">-</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="llm-difficulty-tol-bar"></div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- BKT Fixed Parameters -->
+                    <article class="bkt-params-compare">
+                        <h4>BKT Fixed Parameters</h4>
+                        <div class="param-row-sm">
+                            <span>Learn Rate (T):</span>
+                            <span>10%</span>
+                        </div>
+                        <div class="param-row-sm">
+                            <span>Slip (S):</span>
+                            <span>5%</span>
+                        </div>
+                        <div class="param-row-sm">
+                            <span>Guess (G):</span>
+                            <span>33%</span>
+                        </div>
+                    </article>
+
+
+                </div>
             </div>
+            <!-- Center Column (Main Content) -->
+            <main class="center-column">
+                <!-- Start Screen -->
+                <div id="start-screen" class="screen">
+                    <hgroup>
+                        <h1>Medical Terminology Quiz</h1>
+                        <p>Adaptive learning powered by BKT or LLM</p>
+                    </hgroup>
 
-            <!-- LLM Comparative Metrics (shown in LLM mode) -->
-            <div id="llm-metrics-left" style="display: none;">
-                <article class="metrics-card comparative-header">
-                    <h3>Model Comparison</h3>
-                    <p class="comparison-subtitle">LLM vs BKT Analysis</p>
-                </article>
+                    <label for="mode">Select Mode:</label>
+                    <select id="mode">
+                        <option value="bkt">BKT Mode (Rule-based)</option>
+                        <option value="llm">LLM Mode (AI-powered)</option>
+                    </select>
 
-                <!-- Knowledge Level Comparison -->
-                <article class="metrics-card comparative-metrics">
-                    <div class="metric-comparison">
-                        <div class="metric-half">
-                            <h5>BKT Model</h5>
-                            <div class="metric-value-lg" id="bkt-knowledge-compare">-</div>
-                            <div class="metric-label">Knowledge</div>
-                        </div>
-                        <div class="metric-half">
-                            <h5>LLM Model</h5>
-                            <div class="metric-value-lg" id="llm-knowledge-compare">-</div>
-                            <div class="metric-label">Knowledge</div>
-                        </div>
-                    </div>
-                </article>
+                    <button id="start-btn">Start Quiz</button>
 
-                <!-- LLM-Specific Metrics -->
-                <article class="metrics-card">
-                    <h4>LLM User Model</h4>
-                    <div class="llm-metric">
-                        <div class="llm-metric-header">
-                            <span>Confidence</span>
-                            <span id="llm-confidence-val">-</span>
-                        </div>
-                        <div class="metric-bar">
-                            <div class="metric-bar-fill" id="llm-confidence-bar"></div>
-                        </div>
-                    </div>
-                    <div class="llm-metric">
-                        <div class="llm-metric-header">
-                            <span>Learning Rate</span>
-                            <span id="llm-learning-rate-val">-</span>
-                        </div>
-                        <div class="metric-bar">
-                            <div class="metric-bar-fill" id="llm-learning-rate-bar"></div>
-                        </div>
-                    </div>
-                    <div class="llm-metric">
-                        <div class="llm-metric-header">
-                            <span>Consistency</span>
-                            <span id="llm-consistency-val">-</span>
-                        </div>
-                        <div class="metric-bar">
-                            <div class="metric-bar-fill" id="llm-consistency-bar"></div>
-                        </div>
-                    </div>
-                    <div class="llm-metric">
-                        <div class="llm-metric-header">
-                            <span>Difficulty Tolerance</span>
-                            <span id="llm-difficulty-tol-val">-</span>
-                        </div>
-                        <div class="metric-bar">
-                            <div class="metric-bar-fill" id="llm-difficulty-tol-bar"></div>
-                        </div>
-                    </div>
-                </article>
+                    <article>
+                        <p><strong>BKT Mode:</strong> Uses Bayesian Knowledge Tracing to adapt difficulty based on your
+                            performance.</p>
+                        <p><strong>LLM Mode:</strong> Uses Claude AI to intelligently select questions based on your
+                            learning patterns.</p>
+                    </article>
+                </div>
 
-                <!-- BKT Fixed Parameters -->
-                <article class="metrics-card bkt-params-compare">
-                    <h4>BKT Fixed Parameters</h4>
-                    <div class="param-row-sm">
-                        <span>Learn Rate (T):</span>
-                        <span>10%</span>
-                    </div>
-                    <div class="param-row-sm">
-                        <span>Slip (S):</span>
-                        <span>5%</span>
-                    </div>
-                    <div class="param-row-sm">
-                        <span>Guess (G):</span>
-                        <span>33%</span>
-                    </div>
-                </article>
+                <!-- Question Screen -->
+                <div id="question-screen" class="screen" style="display: none;">
+                    <progress id="progress-fill" value="0" max="100"></progress>
+                    <p style="text-align: center;">Question <span id="question-num">1</span> of 10</p>
 
-                <!-- Comparison Insight -->
-                <article class="metrics-card comparison-insight">
-                    <h4>Insight</h4>
-                    <p id="comparison-insight-text">Complete more questions to see model comparison insights.</p>
-                </article>
-            </div>
+
+
+                    <article id="llm-feedback" style="display: none;">
+                        <p id="llm-feedback-text"></p>
+                    </article>
+
+                    <h2 id="question-text"></h2>
+                    <article id="feedback" style="display: none;">
+                        <p id="feedback-text"></p>
+                        <p id="correct-answer"></p>
+                    </article>
+
+                    <div id="options" class="options"></div>
+
+
+
+                    <button id="next-btn" style="display: none;">Next Question</button>
+                </div>
+
+                <!-- Completion Screen -->
+                <div id="completion-screen" class="screen" style="display: none;">
+                    <hgroup>
+                        <h1>Quiz Complete!</h1>
+                    </hgroup>
+
+                    <article>
+                        <p class="stat">Questions Answered: <strong>10</strong></p>
+                        <p class="stat">Correct Answers: <strong id="correct-count">0</strong></p>
+                        <p class="stat">Accuracy: <strong id="accuracy">0%</strong></p>
+                        <p class="stat" id="final-knowledge-stat">Final Knowledge Level: <strong
+                                id="final-knowledge">0%</strong></p>
+                    </article>
+
+                    <button id="restart-btn">Start New Quiz</button>
+                </div>
+
+                <!-- Loading Overlay -->
+                <div id="loading-overlay" class="loading-overlay" style="display: none;">
+                    <article aria-busy="true">Analyzing your performance...</article>
+                </div>
+            </main>
+
+            <!-- Right Column -->
+            <!-- Current Knowledge (Large Display) -->
+            <aside class="right-column">
+                <div id="bkt-metrics-right" style="display: none;">
+                    <article id="current-knowledge-display">
+                        <h3>Current Knowledge</h3>
+                        <div class="knowledge-large">
+                            <span id="knowledge-percent">0%</span>
+                        </div>
+                    </article>
+                    <!-- BKT Parameters -->
+                    <article class="bkt-params">
+                        <h4>Model Parameters</h4>
+                        <div class="param-row">
+                            <span class="param-label">Slip Rate (S):</span>
+                            <span class="param-value" id="param-s">5%</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Guess Rate (G):</span>
+                            <span class="param-value" id="param-g">33%</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Learn Rate (T):</span>
+                            <span class="param-value" id="param-t">10%</span>
+                        </div>
+                        <div class="param-row">
+                            <span class="param-label">Initial (L0):</span>
+                            <span class="param-value" id="param-l0">1%</span>
+                        </div>
+                    </article>
+                </div>
+                <div id="llm-metrics-right" style="display:none">
+                    <!-- Comparison Insight -->
+                    <article>
+                        <h3>LLM Reasoning</h3>
+                        <p id="reasoning-text">
+                        </p>
+                    </article>
+                    <article class="comparison-insight">
+                        <h4>Insight</h4>
+                        <p id="comparison-insight-text">Complete more questions to see model comparison insights.</p>
+                    </article>
+                </div>
+
+            </aside>
         </div>
-        <!-- Center Column (Main Content) -->
-        <main class="center-column">
-            <!-- Start Screen -->
-            <div id="start-screen" class="screen">
-                <hgroup>
-                    <h1>Medical Terminology Quiz</h1>
-                    <p>Adaptive learning powered by BKT or LLM</p>
-                </hgroup>
-
-                <label for="mode">Select Mode:</label>
-                <select id="mode">
-                    <option value="bkt">BKT Mode (Rule-based)</option>
-                    <option value="llm">LLM Mode (AI-powered)</option>
-                </select>
-
-                <button id="start-btn">Start Quiz</button>
-
-                <article>
-                    <p><strong>BKT Mode:</strong> Uses Bayesian Knowledge Tracing to adapt difficulty based on your
-                        performance.</p>
-                    <p><strong>LLM Mode:</strong> Uses Claude AI to intelligently select questions based on your
-                        learning patterns.</p>
-                </article>
-            </div>
-
-            <!-- Question Screen -->
-            <div id="question-screen" class="screen" style="display: none;">
-                <progress id="progress-fill" value="0" max="100"></progress>
-                <p style="text-align: center;">Question <span id="question-num">1</span> of 10</p>
-
-
-
-                <article id="llm-feedback" style="display: none;">
-                    <p id="llm-feedback-text"></p>
-                </article>
-
-                <h2 id="question-text"></h2>
-                <article id="feedback" style="display: none;">
-                    <p id="feedback-text"></p>
-                    <p id="correct-answer"></p>
-                </article>
-
-                <div id="options" class="options"></div>
-
-
-
-                <button id="next-btn" style="display: none;">Next Question</button>
-            </div>
-
-            <!-- Completion Screen -->
-            <div id="completion-screen" class="screen" style="display: none;">
-                <hgroup>
-                    <h1>Quiz Complete!</h1>
-                </hgroup>
-
-                <article>
-                    <p class="stat">Questions Answered: <strong>10</strong></p>
-                    <p class="stat">Correct Answers: <strong id="correct-count">0</strong></p>
-                    <p class="stat">Accuracy: <strong id="accuracy">0%</strong></p>
-                    <p class="stat" id="final-knowledge-stat">Final Knowledge Level: <strong
-                            id="final-knowledge">0%</strong></p>
-                </article>
-
-                <button id="restart-btn">Start New Quiz</button>
-            </div>
-
-            <!-- Loading Overlay -->
-            <div id="loading-overlay" class="loading-overlay" style="display: none;">
-                <article aria-busy="true">Analyzing your performance...</article>
-            </div>
-        </main>
-
-        <!-- Right Column -->
-        <!-- Current Knowledge (Large Display) -->
-        <aside class="right-column">
-            <div id="bkt-metrics-right" style="display: none;">
-                <article id="current-knowledge-display" class="metrics-card">
-                    <h3>Current Knowledge</h3>
-                    <div class="knowledge-large">
-                        <span id="knowledge-percent">0%</span>
-                    </div>
-                </article>
-                <!-- BKT Parameters -->
-                <article class="metrics-card bkt-params">
-                    <h4>Model Parameters</h4>
-                    <div class="param-row">
-                        <span class="param-label">Slip Rate (S):</span>
-                        <span class="param-value" id="param-s">5%</span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-label">Guess Rate (G):</span>
-                        <span class="param-value" id="param-g">33%</span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-label">Learn Rate (T):</span>
-                        <span class="param-value" id="param-t">10%</span>
-                    </div>
-                    <div class="param-row">
-                        <span class="param-label">Initial (L0):</span>
-                        <span class="param-value" id="param-l0">1%</span>
-                    </div>
-                </article>
-            </div>
-
-            <div id="reasoning-panel" style="display: none;">
-                <h3>LLM Reasoning</h3>
-                <article>
-                    <p id="reasoning-text"></p>
-                </article>
-            </div>
-        </aside>
-    </div>
-
+    </main>
     <script src="/static/app.js"></script>
 </body>
 

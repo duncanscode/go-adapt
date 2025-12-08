@@ -11,6 +11,7 @@ type Question struct{
 	Answer string
 	Metadata QuestionMetadata
 	Options []string
+	Feedback string // Static feedback for BKT mode
 }
 
 type QuestionMetadata struct {

@@ -35,6 +35,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.1,
               Tags: []string{"root identification", "basic roots", "dermatology"},
           },
+          Feedback: "The root 'dermat/o' means skin, while '-itis' means inflammation. Understanding roots is the foundation of medical terminology.",
       },
       {
           ID: 2,
@@ -45,6 +46,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.15,
               Tags: []string{"suffix identification", "basicsuffixes"},
           },
+          Feedback: "The suffix '-ology' means 'study of' and appears in many medical specialties like cardiology and dermatology. Don't confuse it with '-itis' (inflammation).",
       },
       {
           ID: 3,
@@ -55,6 +57,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.2,
               Tags: []string{"analogical reasoning", "suffix pattern", "cardiology"},
           },
+          Feedback: "By changing '-ology' (study of) to '-itis' (inflammation), you transform the meaning. This pattern applies to many terms.",
       },
       {
           ID:     4,
@@ -65,6 +68,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.25,
               Tags:       []string{"term construction", "suffix selection", "gastroenterology"},
           },
+          Feedback: "When building medical terms, '-logy' creates the name of a specialty or field of study. Remember: gastr/o (stomach) + -logy = gastrology.",
       },
       {
           ID:     5,
@@ -75,6 +79,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.3,
               Tags:       []string{"root identification", "nephrology", "organ roots"},
           },
+          Feedback: "The root 'nephr/o' means kidney and appears in terms like nephrology and nephron. Note that 'ren/o' also means kidney in Latin-derived terms.",
       },
       {
           ID:     6,
@@ -85,6 +90,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.35,
               Tags:       []string{"multi-part term", "meaning decomposition", "gastroenterology"},
           },
+          Feedback: "This combines gastr/o (stomach), enter/o (intestines), and -itis (inflammation). Multi-root terms combine meanings additively.",
       },
       {
           ID:     7,
@@ -95,6 +101,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.4,
               Tags:       []string{"prefix identification", "common prefixes"},
           },
+          Feedback: "The prefix 'hyper-' means excessive or above normal, as in hypertension (high blood pressure). Its opposite is 'hypo-' (below normal).",
       },
       {
           ID:     8,
@@ -105,6 +112,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.4,
               Tags:       []string{"analogical reasoning", "hepatology","organ roots"},
           },
+          Feedback: "Apply the pattern: hepat/o (liver) + -itis (inflammation) = hepatitis. This is the same construction pattern as carditis and nephritis.",
       },
       {
           ID:     9,
@@ -115,6 +123,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.45,
               Tags:       []string{"term construction", "surgical suffix", "complex root"},
           },
+          Feedback: "The suffix '-ectomy' means surgical removal. Combined with cholecyst/o (gallbladder), you get cholecystectomy—a common surgical procedure.",
       },
       {
           ID:     10,
@@ -125,6 +134,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.5,
               Tags:       []string{"root identification", "neurology", "related anatomy confusion"},
           },
+          Feedback: "The root 'encephal/o' specifically means brain, not head or skull. Encephalitis is inflammation of the brain tissue itself.",
       },
       {
           ID:     11,
@@ -135,6 +145,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.55,
               Tags:       []string{"suffix distinction", "similar terms", "rheumatology"},
           },
+          Feedback: "Both share arthr/o (joint), but -itis means inflammation while -algia means pain. Understanding suffix differences is crucial for precise medical communication.",
       },
       {
           ID:     12,
@@ -145,6 +156,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.6,
               Tags:       []string{"prefix + root + suffix", "multi-part construction", "cardiology"},
           },
+          Feedback: "Combining prefix + root + suffix: endo- (within) + cardi/o (heart) + -itis (inflammation) = inflammation of the inner heart lining.",
       },
       {
           ID:     13,
@@ -155,6 +167,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.55,
               Tags:       []string{"specialty identification", "hemat/o root", "related concepts"},
           },
+          Feedback: "The root 'hemat/o' or 'hem/o' means blood. Hematology is the medical specialty focused on blood disorders and diseases.",
       },
       {
           ID:     14,
@@ -165,6 +178,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.65,
               Tags:       []string{"multi-root term", "root identification", "structural analysis"},
           },
+          Feedback: "Complex terms often combine multiple roots. Here: oste/o (bone) + arthr/o (joint) + -itis (inflammation) describes bone-joint inflammation.",
       },
       {
           ID:     15,
@@ -175,6 +189,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.6,
               Tags:       []string{"surgical suffix", "advanced suffix", "suffix distinction"},
           },
+          Feedback: "The suffix '-plasty' means surgical repair or reconstruction, as in rhinoplasty (nose reshaping). Don't confuse with '-ectomy' (removal).",
       },
       {
           ID:     16,
@@ -185,6 +200,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.7,
               Tags:       []string{"term decomposition", "pulmonology", "surgical terminology"},
           },
+          Feedback: "Apply the pattern: pneumon/o (lung) + -ectomy (removal) = pneumonectomy. This surgical term follows the standard construction pattern.",
       },
       {
           ID:     17,
@@ -195,6 +211,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.75,
               Tags:       []string{"prefix selection", "term construction", "neurology", "poly- prefix"},
           },
+          Feedback: "The prefix 'poly-' means many or multiple. Combined with neur/o (nerve) + -itis (inflammation), polyneuritis describes multiple nerve inflammation.",
       },
       {
           ID:     18,
@@ -205,6 +222,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.85,
               Tags:       []string{"complex multi-part term", "three components", "gastroenterology"},
           },
+          Feedback: "This complex term combines three parts: cholecyst/o (gallbladder) + lith/o (stone) + -iasis (condition). It means gallstones.",
       },
       {
           ID:     19,
@@ -215,6 +233,7 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.9,
               Tags:       []string{"anatomical layers", "prefix distinction", "cardiology", "advanced"},
           },
+          Feedback: "These prefixes indicate layers: peri- (around/outer), myo- (muscle), endo- (within/inner). Each describes a different layer of the heart.",
       },
       {
           ID:     20,
@@ -225,5 +244,6 @@ var medicalTerminologyQuestions = []Question{
               Difficulty: 0.95,
               Tags:       []string{"highly complex term", "diagnostic procedure", "multi-root construction", "advanced"},
           },
+          Feedback: "This advanced term combines cholangi/o (bile ducts) + pancreat/o (pancreas) + -graphy (recording/imaging). ERCP is a common abbreviation.",
       },
   }

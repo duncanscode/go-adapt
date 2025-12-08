@@ -1,5 +1,13 @@
 /* Minimal custom styles for Pico.css */
 
+/* Custom color variables for learning states */
+:root {
+  --color-correct: #10b981;
+  --color-incorrect: #ef4444;
+  --color-correct-bg: rgba(16, 185, 129, 0.1);
+  --color-incorrect-bg: rgba(239, 68, 68, 0.1);
+}
+
 /* Three-column layout */
 .three-column-layout {
   display: grid;
@@ -21,9 +29,32 @@
 .right-column {
   display: none;
   padding: 2rem;
-  border-left: 1px solid var(--pico-muted-border-color);
 }
 
+/* Tablet: Two columns (content + right sidebar) */
+@media (min-width: 768px) {
+  .three-column-layout {
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .left-column {
+    display: none;
+  }
+
+  .center-column {
+    display: block;
+    max-width: none;
+    padding: 2rem 0;
+  }
+
+  .right-column {
+    display: block;
+    padding: 1rem;
+  }
+}
+
+/* Desktop: Three columns (left metrics + content + right sidebar) */
 @media (min-width: 1024px) {
   .three-column-layout {
     grid-template-columns: minmax(100px, 1fr) minmax(600px, 2fr) minmax(
@@ -33,8 +64,7 @@
     gap: 2rem;
   }
 
-  .left-column,
-  .right-column {
+  .left-column {
     display: block;
   }
 
@@ -69,17 +99,9 @@
   }
 }
 
-.right-column h3 {
-  margin-top: 0;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.7;
-}
-
+/* Right column styling - minimal overrides to Pico defaults */
 .right-column article {
   font-size: 0.9rem;
-  line-height: 1.6;
 }
 
 /* Screen transitions */
@@ -106,25 +128,16 @@
   margin: 1rem 0;
 }
 
+/* Option buttons - leverage Pico's button styling, add only custom behavior */
 .option-btn {
-  padding: 1rem;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 2px solid var(--pico-primary-border);
-  background: var(--pico-background-color);
-  font-size: 1rem;
+  text-align: left; /* Override Pico's centered text */
+  width: 100%;
 }
 
 @media (min-width: 1024px) {
   .options {
     gap: 0.5rem;
     margin: 0.75rem 0;
-  }
-
-  .option-btn {
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
   }
 }
 
@@ -133,32 +146,27 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.option-btn:disabled {
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
 .option-btn.correct-answer {
-  color: #ef4444;
-  border-color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-incorrect); /* Show what they picked was wrong */
+  border-color: var(--color-correct);
+  background: var(--color-correct-bg);
 }
 
 .option-btn.incorrect-answer {
-  color: #ef4444;
-  border-color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  color: var(--color-incorrect);
+  border-color: var(--color-incorrect);
+  background: var(--color-incorrect-bg);
 }
 
 /* Feedback styling */
 .correct {
-  color: #10b981;
+  color: var(--color-correct);
   font-size: 1.2em;
   font-weight: 700;
 }
 
 .incorrect {
-  color: #ef4444;
+  color: var(--color-incorrect);
   font-size: 1.2em;
   font-weight: 700;
 }
@@ -178,25 +186,18 @@
   }
 }
 
-/* Loading overlay */
+/* Loading overlay - uses Pico color variables for automatic dark mode support */
 .loading-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.95);
+  background: color-mix(in srgb, var(--pico-background-color) 95%, transparent);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-}
-
-/* Dark mode override for loading overlay */
-@media (prefers-color-scheme: dark) {
-  .loading-overlay {
-    background: rgba(17, 24, 39, 0.95);
-  }
 }
 
 /* Knowledge display emphasis */
@@ -205,28 +206,25 @@
   font-weight: 700;
 }
 
-/* BKT Metrics Panel */
+/* BKT Metrics Panel - leverage Pico's article styling */
 
-#bkt-metrics-left {
-  padding: 1rem;
+#bkt-metrics-left,
+#llm-metrics-left {
+  padding: var(--pico-spacing);
 }
 
-.metrics-card {
-  padding: 1rem;
-  margin-bottom: 1rem;
+#bkt-metrics-left article,
+#llm-metrics-left article,
+.right-column article {
   font-size: 0.9rem;
+  margin-bottom: var(--pico-spacing);
 }
 
-.metrics-card h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.7;
-}
-
-.metrics-card h4 {
-  margin: 0 0 0.75rem 0;
+#bkt-metrics-left article h3,
+#bkt-metrics-left article h4,
+#llm-metrics-left article h3,
+#llm-metrics-left article h4 {
+  margin-top: 0;
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -281,13 +279,13 @@
 }
 
 .answer-icon.correct {
-  background: rgba(16, 185, 129, 0.2);
-  color: #10b981;
+  background: color-mix(in srgb, var(--color-correct) 20%, transparent);
+  color: var(--color-correct);
 }
 
 .answer-icon.incorrect {
-  background: rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  background: color-mix(in srgb, var(--color-incorrect) 20%, transparent);
+  color: var(--color-incorrect);
 }
 
 /* Difficulty Progression Bars */
@@ -357,16 +355,14 @@
   opacity: 0.6;
 }
 
-/* Knowledge Level Comparison */
+/* Knowledge Level Comparison - uses Pico's .grid class */
 .comparative-metrics {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(59, 130, 246, 0.05) 0%,
+    rgba(16, 185, 129, 0.05) 100%
+  );
   border-left: 3px solid var(--pico-primary);
-}
-
-.metric-comparison {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
 }
 
 .metric-half {
@@ -434,7 +430,11 @@
 
 .metric-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--pico-primary), rgba(59, 130, 246, 0.8));
+  background: linear-gradient(
+    90deg,
+    var(--pico-primary),
+    rgba(59, 130, 246, 0.8)
+  );
   border-radius: 4px;
   transition: width 0.5s ease;
   width: 0%;

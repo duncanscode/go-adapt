@@ -26,7 +26,6 @@ const progressFill = document.getElementById('progress-fill');
 const loadingOverlay = document.getElementById('loading-overlay');
 const llmFeedbackDiv = document.getElementById('llm-feedback');
 const llmFeedbackText = document.getElementById('llm-feedback-text');
-const reasoningPanel = document.getElementById('reasoning-panel');
 const reasoningText = document.getElementById('reasoning-text');
 
 // BKT Metrics elements
@@ -40,6 +39,7 @@ const difficultyTrack = document.getElementById('difficulty-track');
 
 // LLM Comparative Metrics elements
 const llmMetricsLeft = document.getElementById('llm-metrics-left');
+const llmMetricsRight = document.getElementById('llm-metrics-right');
 
 // Chart.js instance
 let knowledgeChart = null;
@@ -48,6 +48,26 @@ let knowledgeChart = null;
 startBtn.addEventListener('click', startSession);
 restartBtn.addEventListener('click', resetQuiz);
 // Note: nextBtn onclick is set dynamically in selectAnswer()
+
+// HTML Sanitizer - allows only safe formatting tags
+function sanitizeHTML(text) {
+    if (!text) return '';
+
+    // Create a temporary div to escape all HTML first
+    const temp = document.createElement('div');
+    temp.textContent = text;
+
+    // Then selectively allow specific safe tags
+    return temp.innerHTML
+        .replace(/&lt;b&gt;/g, '<b>')
+        .replace(/&lt;\/b&gt;/g, '</b>')
+        .replace(/&lt;i&gt;/g, '<i>')
+        .replace(/&lt;\/i&gt;/g, '</i>')
+        .replace(/&lt;em&gt;/g, '<em>')
+        .replace(/&lt;\/em&gt;/g, '</em>')
+        .replace(/&lt;strong&gt;/g, '<strong>')
+        .replace(/&lt;\/strong&gt;/g, '</strong>');
+}
 
 // Helper functions for loading state
 function showLoading() {
@@ -92,12 +112,12 @@ async function startSession() {
             bktMetricsPanelRight.style.display = 'none';
             bktMetricsPanelLeft.style.display = 'none';
             llmMetricsLeft.style.display = 'block';
-            reasoningPanel.style.display = 'block';
+            llmMetricsRight.style.display = 'block';
         } else {
             bktMetricsPanelRight.style.display = 'block';
             bktMetricsPanelLeft.style.display = 'block';
             llmMetricsLeft.style.display = 'none';
-            reasoningPanel.style.display = 'none';
+            llmMetricsRight.style.display = 'none';
             initializeKnowledgeChart();
         }
 
@@ -133,7 +153,7 @@ async function loadNextQuestion() {
 
         // Update reasoning sidebar if available
         if (currentMode === 'llm' && data.selection_reasoning) {
-            reasoningText.textContent = data.selection_reasoning;
+            reasoningText.innerHTML = sanitizeHTML(data.selection_reasoning);
         }
 
         // Hide feedback and next button
@@ -195,9 +215,9 @@ async function selectAnswer(selectedAnswer) {
         // Show feedback
         displayFeedback(data.correct, data.correct_answer, selectedAnswer);
 
-        // Show LLM feedback if available (about the answer just submitted)
-        if (currentMode === 'llm' && data.feedback) {
-            llmFeedbackText.textContent = data.feedback;
+        // Show feedback if available (LLM personalized or BKT static)
+        if (data.feedback) {
+            llmFeedbackText.innerHTML = sanitizeHTML(data.feedback);
             llmFeedbackDiv.style.display = 'block';
         }
 
@@ -287,14 +307,60 @@ function resetQuiz() {
     questionsAnswered = 0;
     correctAnswers = 0;
 
+    // Destroy Chart.js instance to prevent memory leaks
+    if (knowledgeChart) {
+        knowledgeChart.destroy();
+        knowledgeChart = null;
+    }
+
+    // Reset BKT metrics
+    knowledgePercent.textContent = '0%';
+    accuracyDisplay.textContent = '0/0 (0%)';
+    streakDisplay.textContent = '-';
+    streakDisplay.style.color = '';
+    answerHistoryContainer.innerHTML = '';
+    difficultyTrack.innerHTML = '';
+
+    // Reset BKT parameters display
+    document.getElementById('param-s').textContent = '5%';
+    document.getElementById('param-g').textContent = '33%';
+    document.getElementById('param-t').textContent = '10%';
+    document.getElementById('param-l0').textContent = '1%';
+
+    // Reset LLM comparative metrics
+    document.getElementById('bkt-knowledge-compare').textContent = '-';
+    document.getElementById('llm-knowledge-compare').textContent = '-';
+    document.getElementById('llm-confidence-val').textContent = '-';
+    document.getElementById('llm-confidence-bar').style.width = '0%';
+    document.getElementById('llm-learning-rate-val').textContent = '-';
+    document.getElementById('llm-learning-rate-bar').style.width = '0%';
+    document.getElementById('llm-consistency-val').textContent = '-';
+    document.getElementById('llm-consistency-bar').style.width = '0%';
+    document.getElementById('llm-difficulty-tol-val').textContent = '-';
+    document.getElementById('llm-difficulty-tol-bar').style.width = '0%';
+
+    // Reset LLM reasoning and insight
+    reasoningText.textContent = '';
+    document.getElementById('comparison-insight-text').textContent = 'Complete more questions to see model comparison insights.';
+
+    // Reset feedback areas
+    llmFeedbackDiv.style.display = 'none';
+    llmFeedbackText.innerHTML = '';
+    feedbackDiv.style.display = 'none';
+    feedbackText.textContent = '';
+    correctAnswerText.textContent = '';
+
+    // Hide metrics panels
     bktMetricsPanelRight.style.display = 'none';
     bktMetricsPanelLeft.style.display = 'none';
+    llmMetricsLeft.style.display = 'none';
+    llmMetricsRight.style.display = 'none';
+
+    // Return to start screen
     completionScreen.style.display = 'none';
     startScreen.style.display = 'block';
 
     progressFill.value = 0;
-
-
 }
 
 // ========== BKT METRICS FUNCTIONS ==========

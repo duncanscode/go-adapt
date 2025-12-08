@@ -15,11 +15,11 @@
       "WebFetch",
       "WebSearch",
       "Write",
-      "Edit"
+      "Edit",
+      "Bash(mv:*)"
     ],
     "deny": [
       "Bash(rm:*)",
-      "Bash(mv:*)",
       "Bash(cp:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)"

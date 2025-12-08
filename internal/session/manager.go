@@ -93,12 +93,11 @@ type SubmitAnswerResult struct {
 }
 
 func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) *SubmitAnswerResult {
-	if sm.mode == "bkt" {
-		if !correct {
-			sm.bktModel.UpdateIncorrect()
-		} else {
-			sm.bktModel.UpdateCorrect()
-		}
+	// Always update BKT for tracking (used for comparison in LLM mode)
+	if !correct {
+		sm.bktModel.UpdateIncorrect()
+	} else {
+		sm.bktModel.UpdateCorrect()
 	}
 
 	sm.answeredIDs = append(sm.answeredIDs, questionID)
@@ -115,8 +114,9 @@ func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) *SubmitAnsw
 	}
 
 	feedback := ""
-	// Only get feedback from PrepareNextQuestion if in LLM mode
+	// Get feedback based on mode
 	if sm.mode == "llm" {
+		// LLM mode: get personalized feedback from LLM
 		sm.selector.PrepareNextQuestion(ctx)
 		// Peek at cached result to get feedback and user model without consuming it
 		if llmSelector, ok := sm.selector.(*selection.LLMSelector); ok {
@@ -127,7 +127,12 @@ func (sm *SessionManager) SubmitAnswer(questionID int, correct bool) *SubmitAnsw
 			}
 		}
 	} else {
+		// BKT mode: use static feedback from question
 		sm.selector.PrepareNextQuestion(ctx)
+		question, err := sm.questionBank.GetQuestionByID(questionID)
+		if err == nil {
+			feedback = question.Feedback
+		}
 	}
 
 	knowledge := 0.0
@@ -192,6 +197,9 @@ func (sm *SessionManager) GetMetrics() map[string]interface{} {
 				"difficulty_tolerance": sm.lastUserModel.DifficultyTolerance,
 			}
 		}
+
+		// Include BKT's current knowledge for comparison
+		metrics["current_knowledge"] = sm.bktModel.GetCurrentKnowledge()
 
 		// Also include answer history for LLM mode
 		answerHistory := make([]bool, len(sm.answerHistory))
